@@ -4,6 +4,14 @@
 
 โดยใช้ lib [thai-address-database](https://github.com/Sellsuki/thai-address-database "thai-address-database")
 
+คำสั่ง
+
+```
+yarn && yarn start
+```
+
+## อธิบายโค้ด
+
 ### Step 1
 
 เริ่มจากสร้าง input ขึ้นมา และใส่ `value`, `onChange` ให้เรียบร้อย
@@ -134,7 +142,7 @@ function App({ address }: { address: AddressIf }) {
 
 ### Step 4
 
-ขั้นตอนสุดท้ายคือการคลิ๊ก auto complete แล้วให้ไปค่าที่อยู่ไปใส่ใน input หรือการ set state ให้ `addressState` นั่นเอง
+ขั้นตอนสุดท้ายคือการคลิ๊ก auto complete แล้วให้ไปค่าที่อยู่ไปใส่ใน input หรือการ set state ให้ `addressState` นั่นเอง เป็นอันเรียบร้อย
 หลังจากคลิ๊ก อย่าลืมเคลียร์ `autoComplete` ให้ว่างเปล่าด้วย
 
 ```javascript
@@ -169,3 +177,5 @@ function App({ address }: { address: AddressIf }) {
   );
 }
 ```
+
+![](https://raw.githubusercontent.com/dagdun/react-thailand-address-from-scratch/main/images/3.png)
