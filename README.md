@@ -1,46 +1,158 @@
-# Getting Started with Create React App
+# react-thailand-address-from-scratch
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+ขั้นตอนการใช้งานที่อยู่ประเทศไทยแบบเข้าใจง่าย เพื่อให้คุณได้ปรับ design ในแบบฉบับของเว็บคุณ
+โดยใช้ lib [thai-address-database](https://github.com/Sellsuki/thai-address-database "thai-address-database")
 
-## Available Scripts
+เริ่มจากสร้าง input ขึ้นมา และใส่ `value`, `onChange` ให้เรียบร้อย
 
-In the project directory, you can run:
+```javascript
+import React, { useState } from "react";
+import { AddressIf } from "../types";
 
-### `yarn start`
+const Address = () => {
+  const [addressState, setAddress] = useState < AddressIf > address;
+  const handleInput = (field: string, search: string) => {
+    console.log(search); // "province", นคร
+  };
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+  return (
+    <>
+      ตำบล <br />
+      <input
+        value={addressState.district}
+        onChange={(e) => handleInput("district", e.target.value)}
+      />
+      <br />
+      อำเภอ <br />
+      <input
+        value={addressState.amphoe}
+        onChange={(e) => handleInput("amphoe", e.target.value)}
+      />
+      <br />
+      จังหวัด <br />
+      <input
+        value={addressState.province}
+        onChange={(e) => handleInput("province", e.target.value)}
+      />
+      <br />
+      รหัสไปรษณีย์ <br />
+      <input
+        value={addressState.zipcode}
+        onChange={(e) => handleInput("zipcode", e.target.value)}
+      />
+    </>
+  );
+};
+```
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+จากนั้นให้ใส่ function `handleInput` เข้าไป
 
-### `yarn test`
+```javascript
+...
+import {
+  searchAddressByDistrict,
+  searchAddressByAmphoe,
+  searchAddressByProvince,
+  searchAddressByZipcode,
+} from "thai-address-database";
+...
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+function Address() {
+  const [addressState, setAddress] = useState<AddressIf>(address);
 
-### `yarn build`
+  const handleInput = (field: string, search: string) => {
+    let items: AddressIf[] = [];
+    if (field === "district") {
+      items = searchAddressByAmphoe(search);
+      setAddress({ ...addressState, [field]: search });
+    } else if (field === "amphoe") {
+      items = searchAddressByDistrict(search);
+      setAddress({ ...addressState, [field]: search });
+    } else if (field === "province") {
+      items = searchAddressByProvince(search);
+      setAddress({ ...addressState, [field]: search });
+    } else if (field === "zipcode") {
+      items = searchAddressByZipcode(search);
+      setAddress({ ...addressState, [field]: search });
+    }
+	console.log(items): // [{"district": "ชื่อตำบล", "amphoe": "ชื่ออำเภอ", "province": "ชื่อจังหวัด", "zipcode":"รหัสไปรษณีย์"}, { ... }, { ... }]
+  };
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+  return (
+    ...
+  );
+}
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+ต่อมา ให้เราเอา `items` ที่ได้ ไปใส่ใน state (ในที่นี้ lib จะ return มาให้เรา 20 items)
+และนำไปวน auto complete
 
-### `yarn eject`
+```javascript
+function App({ address }: { address: AddressIf }) {
+  ...
+  const [autoComplete, setAutoComplete] = useState<AddressIf[]>([]);
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+  const handleInput = (field: string, search: string) => {
+    let items: AddressIf[] = [];
+	if (field === "district") {
+    ...
+	}
+    setAutoComplete(items);
+  };
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+  return (
+    <div>
+      ....
+      {autoComplete.length > 0 && (
+        <div className="auto-complete">
+          {autoComplete.map((item: AddressIf, i: number) => (
+            <div
+              className="auto-complete-item"
+              key={i}
+            >
+              {item.district} | {item.amphoe} | {item.province} | {item.zipcode}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+ขั้นตอนสุดท้ายคือการคลิ๊ก auto complete แล้วให้ไปค่าที่อยู่ไปใส่ใน input หรือการ set state ให้ `addressState` นั่นเอง
+หลังจากคลิ๊ก อย่าลืมเคลียร์ `autoComplete` ให้ว่างเปล่าด้วย
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+```javascript
+function App({ address }: { address: AddressIf }) {
+  ...
+  const handleInput = (field: string, search: string) => {
+    ...
+  }
 
-## Learn More
+  const fillAddress = (addr: AddressIf) => {
+    setAddress(addr);
+    setAutoComplete([]);
+  };
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+  return (
+    <div>
+      ....
+      {autoComplete.length > 0 && (
+        <div className="auto-complete">
+          {autoComplete.map((item: AddressIf, i: number) => (
+            <div
+              className="auto-complete-item"
+              key={i}
+              onClick={() => fillAddress(item)}
+            >
+              {item.district} | {item.amphoe} | {item.province} | {item.zipcode}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+```
