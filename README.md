@@ -1,7 +1,10 @@
 # react-thailand-address-from-scratch
 
-ขั้นตอนการใช้งานที่อยู่ประเทศไทยแบบเข้าใจง่าย เพื่อให้คุณได้ปรับ design ในแบบฉบับของเว็บคุณ
+ขั้นตอนการใช้งานที่อยู่ประเทศไทยแบบเข้าใจง่าย(รึเปล่า) เพื่อคุณสามารถปรับแต่ง style และใช้ design framework ที่คุณใช้อยู่ โดยไม่ต้อง override style ของ lib นี้ (เพราะไม่มี style)
+
 โดยใช้ lib [thai-address-database](https://github.com/Sellsuki/thai-address-database "thai-address-database")
+
+### Step 1
 
 เริ่มจากสร้าง input ขึ้นมา และใส่ `value`, `onChange` ให้เรียบร้อย
 
@@ -45,6 +48,10 @@ const Address = () => {
 };
 ```
 
+![](https://raw.githubusercontent.com/dagdun/react-thailand-address-from-scratch/main/images/1.png)
+
+### Step 2
+
 จากนั้นให้ใส่ function `handleInput` เข้าไป
 
 ```javascript
@@ -85,6 +92,8 @@ function Address() {
 
 ```
 
+### Step 3
+
 ต่อมา ให้เราเอา `items` ที่ได้ ไปใส่ใน state (ในที่นี้ lib จะ return มาให้เรา 20 items)
 และนำไปวน auto complete
 
@@ -120,6 +129,10 @@ function App({ address }: { address: AddressIf }) {
   );
 }
 ```
+
+![](https://raw.githubusercontent.com/dagdun/react-thailand-address-from-scratch/main/images/2.png)
+
+### Step 4
 
 ขั้นตอนสุดท้ายคือการคลิ๊ก auto complete แล้วให้ไปค่าที่อยู่ไปใส่ใน input หรือการ set state ให้ `addressState` นั่นเอง
 หลังจากคลิ๊ก อย่าลืมเคลียร์ `autoComplete` ให้ว่างเปล่าด้วย
